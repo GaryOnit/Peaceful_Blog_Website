@@ -90,8 +90,19 @@ export default {
   },
   methods: {
     handleAction() {
-      // 这里的字段映射可参考你的 QUE_MAP.js
-      console.log('提交数据:', this.form);
+      const type = this.isLogin ? 'login' : 'register'
+      const data = this.isLogin
+        ? { username: this.form.username, password: this.form.password }
+        : { username: this.form.username, password: this.form.password, email: this.form.email }
+
+      this.$api({ type, data }).then(() => {
+        this.$router.push('/index')
+      }).catch(err => {
+        this.$notify.error({
+          title: this.isLogin ? '登录失败' : '注册失败',
+          message: err.message || '操作失败，请重试'
+        })
+      })
     }
   }
 };

@@ -7,10 +7,12 @@
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
 <template>
-  <div>
-    <ArticleContentVue :article="article" />
-    <CommentTextAreaVue :aid="article.id" />
-    <CommentListVue :comments="article.comments" />
+  <div class="blog-article-page">
+    <div class="blog-article-page__container">
+      <ArticleContentVue :article="article" />
+      <CommentTextAreaVue :aid="article.id" />
+      <CommentListVue :comments="article.comments" />
+    </div>
   </div>
 </template>
 
@@ -55,5 +57,30 @@ export default {
 };
 </script>
 
-<style>
+<style lang="stylus" scoped>
+@import '~@/assets/css/base.styl'
+
+.blog-article-page
+  min-height 100vh
+  background-color bg-theme-color
+  padding 20px 0
+
+  &__container
+    max-width area-width
+    margin 0 auto
+    padding 0 20px
+
+    @media screen and (max-width 768px)
+      padding 0 12px
+
+  // 子组件间距
+  >>> .el-card
+    margin-bottom 20px
+    border-radius 8px
+    border none
+    box-shadow 0 2px 8px rgba(0, 0, 0, 0.06)
+    transition all 0.3s ease
+
+    &:hover
+      box-shadow 0 4px 16px rgba(0, 0, 0, 0.1)
 </style>

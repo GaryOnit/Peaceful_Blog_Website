@@ -88,7 +88,7 @@ export default {
     let isLogin = this.$store.state.token ? true : false,
       nickname = this.userInfo.nickname;
     if (isLogin && !nickname) {
-      this.$store.dispatch("getUserInfo");
+      this.$store.dispatch("getUserInfo", false);
     }
   },
   methods: {

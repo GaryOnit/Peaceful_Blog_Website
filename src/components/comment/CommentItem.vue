@@ -45,5 +45,57 @@ export default {
 };
 </script>
 
-<style>
+<style lang="stylus" scoped>
+warm-bg = #FDFBF7
+warm-border = #E8E0D5
+warm-text = #3D2B1F
+warm-secondary = #8C7B6B
+
+.blog-comment--item
+  padding 20px
+  margin-bottom 16px
+  background-color warm-bg
+  border 1px solid warm-border
+  border-radius 8px
+  transition all 0.3s ease
+
+  &:hover
+    box-shadow 0 2px 8px rgba(180, 160, 130, 0.12)
+
+.blog-comment--user
+  display flex
+  align-items center
+  margin-bottom 12px
+
+.blog-comment--avatar
+  width 36px
+  height 36px
+  border-radius 50%
+  overflow hidden
+  flex-shrink 0
+
+  img
+    width 100%
+    height 100%
+    object-fit cover
+
+.blog-comment--name
+  margin-left 12px
+  font-size 15px
+  font-weight 500
+  color warm-text
+
+.blog-comment-content
+  padding 12px 0
+  font-size 15px
+  line-height 1.7
+  color warm-text
+  word-wrap break-word
+  word-break break-word
+  font-family Georgia, 'Noto Serif SC', serif
+
+.blog-comment-date
+  text-align right
+  font-size 13px
+  color warm-secondary
 </style>

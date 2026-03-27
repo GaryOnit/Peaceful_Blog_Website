@@ -65,19 +65,40 @@ export default {
 };
 </script>
 
-<style lang="stylus">
-@import '~@/assets/css/base.styl'
-.blog-comment-card
-  margin 20px 0
+<style lang="stylus" scoped>
+warm-bg = #FDFBF7
+warm-border = #E8E0D5
+warm-shadow = rgba(180, 160, 130, 0.08)
+warm-text = #3D2B1F
+warm-secondary = #8C7B6B
+warm-active = #A0785A
+
 .blog-comment--editor
   display flex
   flex-direction column
-  justify-content space-between
-  text-align center
-  height 200px
-  &>textarea
-    padding padding-space
-    height 120px
-    resize none
-    margin-bottom 20px
+  gap 16px
+  padding 24px
+
+.blog-comment--input
+  width 100%
+  min-height 140px
+  padding 16px
+  border 2px solid warm-border
+  border-radius 8px
+  font-size 15px
+  line-height 1.6
+  color warm-text
+  background-color warm-bg
+  resize vertical
+  transition all 0.3s ease
+  font-family Georgia, 'Noto Serif SC', serif
+
+  &:focus
+    outline none
+    border-color warm-active
+    box-shadow 0 0 0 3px warm-shadow
+
+  &::placeholder
+    color warm-secondary
+
 </style>

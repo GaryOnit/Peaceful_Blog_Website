@@ -25,15 +25,12 @@ import router from '../router'
 import modal from './modules/modal'
 import like from './modules/like'
 
-// 安装Vuex插件
 Vue.use(Vuex)
 
-// 从基础配置中解构TOKEN名称（用于本地存储的key）
 const { TOKEN_NAME } = base
 // 标记是否为主动退出登录（用于区分主动退出/异地登录）
 let actMe = false
 
-// 创建并导出Vuex仓库实例
 export default new Vuex.Store({
   // 全局状态
   state: {
@@ -42,7 +39,7 @@ export default new Vuex.Store({
     uid: store.get('uid') || "",              // 用户ID：优先从本地存储获取，无则为空
     live2dDis: false                          // Live2D模型显示状态：false隐藏/true显示
   },
-  // 计算属性（类似组件的computed，用于加工state数据）
+  // 计算属性（用于加工state数据）
   getters: {
     userInfo (state) {
       if (state.token) {
@@ -51,70 +48,45 @@ export default new Vuex.Store({
       return {}
     }
   },
-  // 同步修改状态的方法（必须同步执行，不能写异步代码）
+  // 同步修改状态的方法(所有mutation自带参数state)
   mutations: { 
-    /**
-     * 显示Live2D模型
-     * @param {Object} state - 仓库状态
-     */
+    //显示Live2D模型
     RIGHT_LIVE2D_DIS (state) {
       state.live2dDis = true
     },
-    /**
-     * 隐藏Live2D模型
-     * @param {Object} state - 仓库状态
-     */
+    //隐藏Live2D模型
     LEFT_LIVE2D_DIS (state) {
       state.live2dDis = false
     },
-    /**
-     * 设置token到state（从本地存储同步）
-     * @param {Object} state - 仓库状态
-     */
+    //设置token到state
     SET_TOKEN (state) {
       state.token = store.get(TOKEN_NAME)
     },
-    /**
-     * 清除token（清空state + 删除本地存储）
-     * @param {Object} state - 仓库状态
-     */
+    //清除token
     CANCEL_TOKEN (state) {
       state.token = ""
       store.remove(TOKEN_NAME)
     },
-    /**
-     * 清除uid（清空state + 删除本地存储）
-     * @param {Object} state - 仓库状态
-     */
+    //清除uid（清空state + 删除本地存储）
     CANCEL_UID (state) {
       state.uid = ""
       store.remove('uid')
     },
-    /**
-     * 设置用户信息到state
-     * @param {Object} state - 仓库状态
-     * @param {Object} userInfo - 接口返回的用户信息
-     */
+    //设置用户信息到state
     SET_USERINFO (state, userInfo) {
       state.userInfo = userInfo
     }
   },
-  // 异步操作方法（可执行异步代码，最终通过mutation修改state）
+  // 异步操作方法（所有action自带第一个参数，可通过dispatch调用其他action，commit调用mutation，getters获取计算属性）
   actions: { 
-    /**
-     * 登录操作
-     * @param {Object} context - 仓库上下文（包含commit/dispatch等方法）
-     */
+    //登录操作
     async login ({ dispatch, commit }) {
       // 触发设置token的mutation
       commit('SET_TOKEN')
       // 触发获取用户信息的action
       dispatch('getUserInfo')
     },
-    /**
-     * 退出登录操作
-     * @param {Object} context - 仓库上下文
-     */
+    // 退出登录操作
     async logout ({ dispatch, commit }) {
       // 标记为主动退出
       actMe = true
@@ -124,19 +96,26 @@ export default new Vuex.Store({
       commit('CANCEL_TOKEN')
       commit('CANCEL_UID')
     },
-    /**
-     * 建立WebSocket连接（用户上线）
-     * @param {Object} context - 仓库上下文
-     */
+    //建立WebSocket连接（用户上线）
     async online ({ commit, getters }) {
+      // 如果已有连接且已连接，直接返回，避免重复创建
+      if (Vue.prototype.$ws && Vue.prototype.$ws.connected) {
+        return
+      }
+
       // 创建WebSocket连接：连接到聊天服务地址，指定传输方式为websocket
       Vue.prototype.$ws = io(process.env.VUE_APP_USER_CHAT_PATH, { transports: ['websocket'] })
       // 从getters获取用户ID和昵称
       let { _id, nickname } = getters.userInfo
 
-      // 向服务端发送"online"事件，告知用户上线（携带用户ID和昵称）
-      Vue.prototype.$ws.emit('online', { uid: _id, nickname })
-      
+      // 重置主动退出标记，避免首次登录误判为异地登录
+      actMe = false
+
+      // 连接建立后再发送online事件
+      Vue.prototype.$ws.on('connect', () => {
+        Vue.prototype.$ws.emit('online', { uid: _id, nickname })
+      })
+
       // 监听WebSocket断开连接事件
       Vue.prototype.$ws.on('disconnect', () => {
         // 清空全局WebSocket实例
@@ -165,21 +144,20 @@ export default new Vuex.Store({
         commit('CANCEL_TOKEN')
       })
     },
-    /**
-     * 获取用户信息（登录后调用）
-     * @param {Object} context - 仓库上下文
-     */
-    async getUserInfo ({ dispatch, commit }) {
+    //获取用户信息（登录后调用）
+    async getUserInfo ({ dispatch, commit }, showNotify = true) {
       try {
         // 调用HTTP接口获取用户信息
         let userInfo = await http({ type: 'getUserInfo' })
         // 将用户信息存入state
         commit('SET_USERINFO', userInfo)
-        // 显示登录成功提示
-        Vue.prototype.$notify.success({
-          title: '登录成功',
-          message: `欢迎您 ${userInfo.nickname}`
-        })
+        // 只在登录时显示提示
+        if (showNotify) {
+          Vue.prototype.$notify.success({
+            title: '登录成功',
+            message: `欢迎您 ${userInfo.nickname}`
+          })
+        }
         // 触发建立WebSocket连接的action（用户上线）
         dispatch('online')
       } catch (err) {
