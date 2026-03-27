@@ -86,6 +86,9 @@ export default {
     handlerFocusTextarea() {
       this.$EventBus.$emit("focusTextarea");
     },
+    scrollToTop() {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    },
     addColumn() {
       this.refreshModal("column"); //添加分类
     },

@@ -67,6 +67,22 @@
       </ul>
     </el-card>
 
+    <!-- 分类列表 -->
+    <el-card class="box-card blog-column--card">
+      <div class="blog-column--header">
+        <span class="blog-column--title">分类</span>
+      </div>
+      <ul class="blog-column--list">
+        <li v-for="item in columns"
+            :key="item.id"
+            class="blog-column--item"
+            @click="goToColumn(item.id)">
+          <span class="blog-column--name">{{ item.name }}</span>
+          <span class="blog-column--count">{{ item.aids.length }}</span>
+        </li>
+      </ul>
+    </el-card>
+
   </el-aside>
 </template>
 
@@ -78,6 +94,7 @@ export default {
   mixins: [MIXIN],
   data () {
     return {
+      columns: [],
       newsList: [
         { id: 1, type: 'tech', typeLabel: '技术', title: 'Vue 3.5 正式发布，响应式性能大幅提升', time: '今天' },
         { id: 2, type: 'ai', typeLabel: 'AI', title: 'GPT-5 开放公测，多模态能力再度突破', time: '昨天' },
@@ -93,7 +110,23 @@ export default {
     },
     ...mapGetters(['userInfo'])
   },
-  methods: {}
+  created() {
+    this.getColumns();
+  },
+  methods: {
+    goToColumn(columnId) {
+      this.$router.push({ name: 'index', query: { columnId } }).catch(err => {});
+    },
+    async getColumns() {
+      try {
+        let columns = await this.$api({ type: 'columns' });
+        this.columns = columns.list;
+        console.log('获得的分类!!', this.columns)
+      } catch (err) {
+        console.log(err);
+      }
+    }
+  }
 }
 </script>
 
@@ -271,6 +304,67 @@ warm-bg = #FDFBF7
 .blog-news--time
   font-size 11px
   color #b0a090
+
+/* 分类列表卡片 */
+.blog-column--card
+  width 80%
+  max-width 240px
+  margin-top 16px
+  text-align left
+
+.blog-column--header
+  margin-bottom 12px
+
+.blog-column--title
+  font-size 13px
+  font-weight 600
+  color warm-text
+  letter-spacing 0.05em
+
+.blog-column--list
+  list-style none
+  margin 0
+  padding 0
+  display flex
+  flex-direction column
+  gap 8px
+
+.blog-column--item
+  display flex
+  justify-content space-between
+  align-items center
+  padding 8px 12px
+  border-radius 6px
+  background-color warm-bg
+  cursor pointer
+  transition all 0.2s ease
+
+  &:hover
+    background-color warm-active
+    transform translateX(4px)
+
+    .blog-column--name
+      color #FFFFFF
+
+    .blog-column--count
+      background-color rgba(255, 255, 255, 0.3)
+      color #FFFFFF
+
+.blog-column--name
+  font-size 13px
+  color warm-text
+  transition color 0.2s ease
+
+.blog-column--count
+  font-size 11px
+  color warm-secondary
+  background-color #E8E0D5
+  padding 2px 8px
+  border-radius 10px
+  min-width 24px
+  text-align center
+  transition all 0.2s ease
+
 .blog-avatar--placeholder
   width 100px
   height 100px
