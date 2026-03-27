@@ -52,15 +52,20 @@ warm-text = #3D2B1F
 warm-secondary = #8C7B6B
 
 .blog-comment--item
-  padding 20px
+  padding 24px
   margin-bottom 16px
   background-color warm-bg
-  border 1px solid warm-border
-  border-radius 8px
+  border none
+  border-radius 10px
+  box-shadow 0 2px 8px rgba(160, 120, 90, 0.06)
   transition all 0.3s ease
 
   &:hover
-    box-shadow 0 2px 8px rgba(180, 160, 130, 0.12)
+    box-shadow 0 4px 16px rgba(160, 120, 90, 0.12)
+    transform translateY(-2px)
+
+  &:last-child
+    margin-bottom 0
 
 .blog-comment--user
   display flex
@@ -68,11 +73,13 @@ warm-secondary = #8C7B6B
   margin-bottom 12px
 
 .blog-comment--avatar
-  width 36px
-  height 36px
+  width 40px
+  height 40px
   border-radius 50%
   overflow hidden
   flex-shrink 0
+  border 2px solid #E8E0D5
+  transition border-color 0.3s ease
 
   img
     width 100%

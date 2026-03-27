@@ -96,6 +96,15 @@ export default {
 </script>
 
 <style lang="stylus">
-.blog-info-like.active
-  color #409EFF
-</style>
+.blog-info-like
+  cursor pointer
+  transition all 0.2s ease
+
+  &.active
+    color #A0785A
+
+.blog-info--item
+  cursor pointer
+
+  &:hover
+    color #A0785A

@@ -30,7 +30,7 @@
           </el-col>
           <el-col :span="2"
                   class="blog-circle-menu--col"
-                  v-if="circleMenuList.length > 0">
+                  v-if="circleMenuList.length > 0 && $route.name !== 'article'">
             <BaseCircleMenuVue :circleMenuList="circleMenuList" />
           </el-col>
         </el-row>

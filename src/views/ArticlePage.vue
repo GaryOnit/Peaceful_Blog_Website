@@ -9,10 +9,11 @@
 <template>
   <div class="blog-article-page">
     <div class="blog-article-page__container">
-      <ArticleContentVue :article="article" />
+      <ArticleContentVue :article="article" :loading="loading" />
       <CommentTextAreaVue :aid="article.id" />
       <CommentListVue :comments="article.comments" />
     </div>
+    <BaseCircleMenuVue :circleMenuList="circleMenuList" />
   </div>
 </template>
 
@@ -20,17 +21,24 @@
 import ArticleContentVue from '@/components/article/ArticleContent.vue';
 import CommentListVue from '@/components/comment/CommentList.vue';
 import CommentTextAreaVue from '@/components/comment/CommentTextArea.vue';
+import BaseCircleMenuVue from '@/components/base/BaseCircleMenu.vue';
 
 export default {
   name:'ArticlePage',
   data() {
     return {
       id:'',
-      article:{}
+      article:{},
+      loading: true,
+      circleMenuList: [
+        { icon: 'el-icon-edit-outline', handler: 'handlerFocusTextarea' },
+        { icon: 'el-icon-top', handler: 'scrollToTop', noAuth: true },
+        { icon: 'el-icon-star-on', exce: true }
+      ]
     };
   },
   components:{
-    ArticleContentVue,CommentListVue,CommentTextAreaVue
+    ArticleContentVue,CommentListVue,CommentTextAreaVue,BaseCircleMenuVue
   },
   provide () {
     return {
@@ -43,7 +51,14 @@ export default {
   },
   mounted() {},
   methods: {
+    handlerFocusTextarea() {
+      this.$EventBus.$emit('focusTextarea');
+    },
+    scrollToTop() {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    },
     async getArticleById () {
+      this.loading = true;
       try {
         this.article = await this.$api({ type: 'getArticleById', data: { id: this.id } })
       } catch (err) {
@@ -51,6 +66,8 @@ export default {
           title: '获取失败',
           message: err.message
         })
+      } finally {
+        this.loading = false;
       }
     }
   },
@@ -62,25 +79,25 @@ export default {
 
 .blog-article-page
   min-height 100vh
-  background-color bg-theme-color
-  padding 20px 0
+  background-color #FDFBF7
+  padding 32px 0
 
   &__container
     max-width area-width
     margin 0 auto
-    padding 0 20px
+    padding 0 24px
 
     @media screen and (max-width 768px)
-      padding 0 12px
+      padding 0 16px
 
-  // 子组件间距
   >>> .el-card
-    margin-bottom 20px
-    border-radius 8px
+    margin-bottom 24px
+    border-radius 12px
     border none
-    box-shadow 0 2px 8px rgba(0, 0, 0, 0.06)
+    background-color #FFFFFF
+    box-shadow 0 2px 12px rgba(160, 120, 90, 0.08)
     transition all 0.3s ease
 
     &:hover
-      box-shadow 0 4px 16px rgba(0, 0, 0, 0.1)
+      box-shadow 0 4px 20px rgba(160, 120, 90, 0.12)
 </style>

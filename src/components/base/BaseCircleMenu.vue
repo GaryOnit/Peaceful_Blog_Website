@@ -90,19 +90,21 @@ export default {
       this.refreshModal("column"); //添加分类
     },
     clickMenu(item) {
-      if (!localStorage.getItem("ua_token")) {
+      let { route, handler, noAuth } = item;
+
+      if (!noAuth && !localStorage.getItem("ua_token")) {
         this.$notify.warning({
           title: "通知",
           message: "请先登录",
         });
         return;
       }
-      let { route, handler } = item;
+
       if (route) {
-        this.$router.push(route); //切换到指定路由
+        this.$router.push(route);
       }
       if (handler) {
-        this[handler] && this[handler](); //执行相应的handler
+        this[handler] && this[handler]();
       }
     },
     ...mapActions(["pullLike", "pushLike", "sendLikes"]),
