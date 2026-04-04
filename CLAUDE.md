@@ -33,7 +33,7 @@ src/
 │   ├── css/           # 全局 Stylus 样式（global.styl / base.styl / main.styl / typo.styl）
 │   └── img/           # 静态图片资源
 ├── components/        # 公共小组件
-│   ├── article/       # ArticleBarInfo.vue、ArticleContent.vue
+│   ├── article/       # ArticleBarInfo.vue、ArticleContent.vue、ArticleAIChat.vue
 │   ├── base/          # BaseHeader / BaseAside / BaseForm / BaseModal / BaseCircleMenu / BasePagination
 │   ├── card/          # CardArticleItem.vue（文章预览卡片）
 │   ├── comment/       # CommentList / CommentItem / CommentTextArea
@@ -196,3 +196,13 @@ npm run serve
 - 左右 4:6 分栏：左侧表单（米白背景），右侧封面图（`login_cover.webp` + 半透明蒙版）
 - 支持登录/注册 Tab 切换，邮箱输入框有 slide-fade 入场动画
 - 登录成功后优先跳转 `redirect` 参数路径，否则回首页
+
+### ArticleAIChat（`src/components/article/ArticleAIChat.vue`）
+- 插入位置：`ArticlePage.vue` 中，正文（`ArticleContentVue`）下方、评论输入框（`CommentTextAreaVue`）上方
+- 接收 prop：`article`（完整文章对象），内部使用 `article.content`（HTML）作为上下文
+- **预设引导问题**：组件初始展示 3 个快捷问题，点击后直接发送，发送后隐藏
+- **流式输出**：使用原生 `fetch` + `ReadableStream` 读取后端 SSE，逐字追加到 AI 气泡；回复中光标闪烁
+- **多轮对话**：每次请求携带完整 `messages` 历史
+- **输入框**：Enter 发送，Shift+Enter 换行，自适应高度（max 120px）；发送中按钮 loading 并禁用
+- **气泡样式**：用户消息靠右暖棕色背景，AI 消息靠左白色卡片；历史区域 max-height 400px 内滚动
+- **后端接口**：直接 `fetch('http://127.0.0.1:3000/api/ai/chat')`，不经过 `$api` 封装（SSE 需原生 fetch）
