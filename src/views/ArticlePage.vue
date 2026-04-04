@@ -10,6 +10,7 @@
   <div class="blog-article-page">
     <div class="blog-article-page__container">
       <ArticleContentVue :article="article" :loading="loading" />
+      <ArticleAIChatVue :article="article" />
       <CommentTextAreaVue :aid="article.id" />
       <CommentListVue :comments="article.comments" />
     </div>
@@ -19,6 +20,7 @@
 
 <script>
 import ArticleContentVue from '@/components/article/ArticleContent.vue';
+import ArticleAIChatVue from '@/components/article/ArticleAIChat.vue';
 import CommentListVue from '@/components/comment/CommentList.vue';
 import CommentTextAreaVue from '@/components/comment/CommentTextArea.vue';
 import BaseCircleMenuVue from '@/components/base/BaseCircleMenu.vue';
@@ -38,7 +40,7 @@ export default {
     };
   },
   components:{
-    ArticleContentVue,CommentListVue,CommentTextAreaVue,BaseCircleMenuVue
+    ArticleContentVue,ArticleAIChatVue,CommentListVue,CommentTextAreaVue,BaseCircleMenuVue
   },
   provide () {
     return {

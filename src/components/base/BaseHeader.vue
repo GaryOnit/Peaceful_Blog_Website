@@ -2,7 +2,7 @@
  * @Author: Garyonit 3253975221@qq.com
  * @Date: 2025-09-28 16:07:25
  * @LastEditors: kusachan 3253975221@qq.com
- * @LastEditTime: 2026-03-25 16:52:34
+ * @LastEditTime: 2026-04-04 16:44:33
  * @FilePath: \vue-blog\src\components\base\BaseHeader.vue
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
@@ -31,7 +31,7 @@
       <nav class="blog-head--menu">
         <router-link class="blog-menu--item" to="/index">首页</router-link>
         <router-link class="blog-menu--item" to="/column">分类</router-link>
-        <router-link class="blog-menu--item" to="/album">相册</router-link>
+        <!-- <router-link class="blog-menu--item" to="/album">相册</router-link> -->
         <router-link class="blog-menu--item" to="/socket">聊天室</router-link>
         <router-link v-if="$store.state.userInfo.nickname"
                      class="blog-menu--item"

@@ -58,7 +58,8 @@ src/
 │   ├── ColumnPage.vue
 │   ├── EditorPage.vue
 │   ├── UserPage.vue
-│   └── SocketPage.vue
+│   ├── SocketPage.vue
+│   └── LoginView.vue  # 沉浸式全屏登录/注册页（路由：/auth）
 ├── App.vue
 └── main.js
 ```
@@ -81,44 +82,37 @@ src/
 }
 ```
 
-### 设计风格目标
-- 整体风格：**现代、简洁、有层次感**，适合博客类内容站点
-- 配色：优先复用项目现有主题色；如需新增，选用低饱和度、易于阅读的配色
-- 交互：按钮、头像、图标等可交互元素需有 `transition` 过渡动画（建议 `0.2s ~ 0.3s`）
+### 设计风格：温暖极简博客风
 
-### 全局样式变量（`src/assets/css/base.styl`）
+整体定位是**现代、克制、有温度**的内容型博客，追求"纸质书页"般的阅读氛围。
 
-```stylus
-header-height = 60px
-area-width = 1200px
-radius-theme-size = 4px
-padding-space = 8px
-font-size-h = 12px
-font-size-p = 16px
+- 字体：衬线体（Georgia / Noto Serif SC）强调人文质感
+- 布局：大量留白，低密度，避免视觉噪音
+- 圆角：约 `8px ~ 12px`，细边框
+- 交互：按钮、头像、图标等可交互元素统一配有 `transition` 过渡动画（`0.2s ~ 0.3s`）
+- Element UI 覆盖：将默认蓝色主题替换为暖棕色系（`#A0785A`）
 
-bg-theme-color = #f0f1f5           // 页面浅灰背景
-bg-reverse-color = #2D2F33        // Header 深色背景
-line-theme-color = rgb(85,85,85)
-line-reverse-color = #ffffff
-font-theme-color = rgb(85,85,85)  // 正文主色
-font-modifier-color = rgb(153,153,153)  // 次要文字
-font-title-color = #555
+### 主题色板（已落地，所有组件统一使用）
 
-// 辅助色板
-bg-color-red = #FF4E50
-bg-color-orange = #FA6900
-bg-color-blue = #69D2E7
-bg-color-green = #A7DBD8
-```
+| 变量名（Stylus 局部变量） | 色值 | 用途 |
+|---|---|---|
+| `warm-bg` | `#FDFBF7` | 页面背景，米白/暖白 |
+| `warm-text` | `#3D2B1F` | 正文主色，深棕黑 |
+| `warm-secondary` | `#8C7B6B` | 次要文字、占位符、图标 |
+| `warm-active` | `#A0785A` | 主色调，按钮/激活态/下划线 |
+| `warm-active-hover` | `#8A6649` | 主色 hover 深色 |
+| `warm-border` | `#E8E0D5` | 边框、分割线 |
+| `warm-cream` | `#FBF7F2` | 卡片/组件背景，略深于页面 |
+| 点赞激活色 | `#C8825A` | 暖橙棕，情感反馈专用 |
 
-新增颜色时从以上色板中优先选取，保持整体色调一致。
+> 新增颜色时优先从以上色板中选取。确实需要新色时，选用低饱和度暖色调，保持整体一致性。
 
 ### 命名约定（BEM 风格）
 - 沿用现有 `.blog-` 前缀命名空间
 - 格式：`.blog-[模块]--[状态/子元素]`，例如：
   - `.blog-header--login`
   - `.blog-avatar-img`
-  - `.blog-header--logout`
+  - `.blog-login__submit-btn`（新页面也可用 `__` 双下划线子元素写法）
 
 ---
 
@@ -156,10 +150,9 @@ export default {
 
 ## 禁止修改的范围
 
-- `src/store/` 下的所有 Vuex 模块（**不得修改状态结构和 action 名称**）
-- `src/router/` 路由配置文件
 - `public/index.html`
 - 任何 `.env` 配置文件
+- `src/store/modules/` 下的 `like.js` 和 `modal.js`（**不得修改状态结构和 action 名称**）
 
 ---
 
@@ -183,10 +176,23 @@ npm run serve
 
 ---
 
-## 参考：现有组件示例（UserImgAvatar）
+## 参考：已重构的关键组件
 
-该组件位于 `src/components/user/UserImgAvatar.vue`，功能是：
-- 用户登录后在右上角显示头像（`el-image` 组件，圆形裁剪）
-- 点击退出登录图标（SVG）触发 Vuex `logout` action
+### UserImgAvatar（`src/components/user/UserImgAvatar.vue`）
+- 用户登录后右上角头像，**鼠标悬停**触发下拉菜单（含昵称、友情链接、退出登录）
+- 下拉箭头悬停时旋转 180°
 
-重构时可以以此为参考，了解项目的代码风格和组件粒度。
+### BaseHeader（`src/components/base/BaseHeader.vue`）
+- 滚动超过 60px 后高度从 64px 收缩至 48px（`is-scrolled` 类）
+- Logo 为内联 SVG，填充色 `#D97757`，hover 旋转+缩放
+- 登录入口由 `UserLoginHead` 组件承载，点击跳转至 `/auth`
+
+### BaseCircleMenu（`src/components/base/BaseCircleMenu.vue`）
+- 固定在页面右侧中部（`position: fixed`），造型为"挂绳门牌"
+- 所有菜单项点击前检查登录态（`localStorage.getItem("ua_token")`），未登录弹出 `$notify.warning`
+
+### LoginView（`src/views/LoginView.vue`）
+- 路由：`/auth`，独立于 HomePage 的全屏页面
+- 左右 4:6 分栏：左侧表单（米白背景），右侧封面图（`login_cover.webp` + 半透明蒙版）
+- 支持登录/注册 Tab 切换，邮箱输入框有 slide-fade 入场动画
+- 登录成功后优先跳转 `redirect` 参数路径，否则回首页
