@@ -35,7 +35,13 @@ service.interceptors.request.use(async (config) => {
 service.interceptors.response.use((response) => {
   //剥离最外层
   let result = response.data
-  return result?.data;
+  let data = result?.data
+  // 将数据库中存储的本地图片地址替换为线上地址
+  if (data && BASE_URL !== 'http://127.0.0.1:3000') {
+    const str = JSON.stringify(data).replace(/http:\/\/127\.0\.0\.1:3000/g, BASE_URL)
+    data = JSON.parse(str)
+  }
+  return data
 }, (error) => {
   return Promise.reject(error);
 });
