@@ -4,7 +4,7 @@
  * @LastEditors: kusachan 3253975221@qq.com
  * @LastEditTime: 2026-03-21 14:43:19
  * @FilePath: \vue-blog\src\store\index.js
- * @Description: Vuex 核心仓库，管理全局状态（用户认证、Live2D显示、WebSocket连接等）
+ * @Description: Vuex 核心仓库，管理全局状态（用户认证、WebSocket连接等）
  */
 // 导入Vue核心库
 import Vue from 'vue'
@@ -37,7 +37,6 @@ export default new Vuex.Store({
     token: store.get(TOKEN_NAME) || "",       // 用户令牌：优先从本地存储获取，无则为空
     userInfo: {},                             // 用户信息对象（包含昵称、ID等）
     uid: store.get('uid') || "",              // 用户ID：优先从本地存储获取，无则为空
-    live2dDis: false                          // Live2D模型显示状态：false隐藏/true显示
   },
   // 计算属性（用于加工state数据）
   getters: {
@@ -49,15 +48,7 @@ export default new Vuex.Store({
     }
   },
   // 同步修改状态的方法(所有mutation自带参数state)
-  mutations: { 
-    //显示Live2D模型
-    RIGHT_LIVE2D_DIS (state) {
-      state.live2dDis = true
-    },
-    //隐藏Live2D模型
-    LEFT_LIVE2D_DIS (state) {
-      state.live2dDis = false
-    },
+  mutations: {
     //设置token到state
     SET_TOKEN (state) {
       state.token = store.get(TOKEN_NAME)

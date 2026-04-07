@@ -178,25 +178,6 @@ npm run serve
 
 ## 参考：已重构的关键组件
 
-### UserImgAvatar（`src/components/user/UserImgAvatar.vue`）
-- 用户登录后右上角头像，**鼠标悬停**触发下拉菜单（含昵称、友情链接、退出登录）
-- 下拉箭头悬停时旋转 180°
-
-### BaseHeader（`src/components/base/BaseHeader.vue`）
-- 滚动超过 60px 后高度从 64px 收缩至 48px（`is-scrolled` 类）
-- Logo 为内联 SVG，填充色 `#D97757`，hover 旋转+缩放
-- 登录入口由 `UserLoginHead` 组件承载，点击跳转至 `/auth`
-
-### BaseCircleMenu（`src/components/base/BaseCircleMenu.vue`）
-- 固定在页面右侧中部（`position: fixed`），造型为"挂绳门牌"
-- 所有菜单项点击前检查登录态（`localStorage.getItem("ua_token")`），未登录弹出 `$notify.warning`
-
-### LoginView（`src/views/LoginView.vue`）
-- 路由：`/auth`，独立于 HomePage 的全屏页面
-- 左右 4:6 分栏：左侧表单（米白背景），右侧封面图（`login_cover.webp` + 半透明蒙版）
-- 支持登录/注册 Tab 切换，邮箱输入框有 slide-fade 入场动画
-- 登录成功后优先跳转 `redirect` 参数路径，否则回首页
-
 ### ArticleAIChat（`src/components/article/ArticleAIChat.vue`）
 - 插入位置：`ArticlePage.vue` 中，正文（`ArticleContentVue`）下方、评论输入框（`CommentTextAreaVue`）上方
 - 接收 prop：`article`（完整文章对象），内部使用 `article.content`（HTML）作为上下文
