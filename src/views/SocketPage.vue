@@ -56,11 +56,17 @@ export default {
   },
   created() {
     this.initSocket();
+    this.clientChat = this._.debounce(this._clientChat, 300, { leading: true, trailing: false })
   },
   beforeDestroy() {
     if(this.ws) this.ws.emit("leaveChat");
   },
   methods: {
+    //登录 → 建立 WS
+    //连接成功 → 触发 connect → 发 online 上线
+    //进聊天室 → 发 enterChat
+    //退聊天室 → 发 leaveChat
+    //关闭 → 连接断开
     initSocket() {
       if (this.$ws) {
         this.ws = this.$ws;
@@ -117,7 +123,8 @@ export default {
         if(container) container.scrollTop = container.scrollHeight;
       });
     },
-    clientChat() {
+    clientChat() {},
+    _clientChat() {
       if (!this.sendMsg.trim()) return;
       this.addChat({ isMe: true, msg: this.sendMsg, nickname: this.nickname });
       this.ws.emit("send", this.sendMsg);

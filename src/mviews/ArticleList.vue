@@ -12,7 +12,7 @@
         :item-size="100"
         key-field="id"
         v-slot="{ item }"
-        @scroll.native="onScroll"
+        @scroll.native="_onScrollThrottled"
       >
         <router-link :to="{ name: 'mArticle', params: { id: item.id } }">
           <ArticleItem :article="item" />
@@ -52,6 +52,7 @@ export default {
   mounted() {
     this.$EventBus.$off("search-article", this.searchArticle);
     this.$EventBus.$on("search-article", this.searchArticle);
+    this._onScrollThrottled = this._.throttle(this.onScroll, 100)
     this.onLoad();
   },
   watch: {

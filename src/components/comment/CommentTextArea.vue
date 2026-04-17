@@ -38,6 +38,9 @@ export default {
       commentVal: ''
     };
   },
+  created () {
+    this.submitComment = this._.debounce(this._submitComment, 1000, { leading: true, trailing: false })
+  },
   computed:{
     ...mapState(['uid']),
     isLoggedIn() {
@@ -65,7 +68,8 @@ export default {
     focusTextarea(){
       this.$refs['textarea']?.focus()
     },
-    async submitComment () {
+    async submitComment () {},
+    async _submitComment () {
       if (this.commentVal.trim().length === 0) {
         this.$notify.info({
           title: '请填写评论内容',
