@@ -29,7 +29,7 @@ export default async function Http ({ type, data }) {
     }
     //对需要加密的字段,比如密码进行加密
     if (rsaKey && data[rsaKey]) {
-      data[rsaKey] = await encrypt(data[rsaKey])
+      data = { ...data, [rsaKey]: await encrypt(data[rsaKey]) }
     }
     data = method === 'get' ? { params: data } : data
 
