@@ -54,7 +54,7 @@
               </el-input>
             </el-form-item>
 
-            <el-button type="primary" class="blog-login__submit-btn" @click="handleAction">
+            <el-button type="primary" class="blog-login__submit-btn" @click="handleAction" :loading="isSubmitting" :disabled="isSubmitting">
               {{ isLogin ? '登 录' : '注 册' }}
             </el-button>
           </el-form>
@@ -76,6 +76,7 @@ export default {
   data() {
     return {
       isLogin: true,
+      isSubmitting: false,
       form: {
         username: '',
         password: '',
@@ -95,6 +96,7 @@ export default {
         ? { username: this.form.username, password: this.form.password }
         : { username: this.form.username, password: this.form.password, email: this.form.email }
 
+      this.isSubmitting = true
       this.$api({ type, data }).then(() => {
         this.$router.push('/index')
       }).catch(err => {
@@ -102,6 +104,8 @@ export default {
           title: this.isLogin ? '登录失败' : '注册失败',
           message: err.message || '操作失败，请重试'
         })
+      }).finally(() => {
+        this.isSubmitting = false
       })
     }
   }

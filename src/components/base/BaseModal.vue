@@ -24,9 +24,11 @@
       <!-- 对话框底部插槽：自定义按钮区域 -->
       <div slot="footer" class="dialog-footer">
         <!-- 循环渲染按钮：按钮配置从modal.config获取 -->
-        <el-button 
+        <el-button
           v-for="btn in btns"
           :key="btn.targetName"
+          :loading="btn.isSubmit && isSubmitting"
+          :disabled="btn.isSubmit && isSubmitting"
           @click="btnHandler(btn.targetName,btn.isSubmit)">{{btn.name}}</el-button>
       </div>
     </el-dialog>
@@ -50,7 +52,7 @@ export default {
   },
   data () {
     return {
-      
+      isSubmitting: false
     };
   },
   // 计算属性
@@ -130,6 +132,7 @@ export default {
       refForm.$refs['elForm'].validate(async (valid) => {
         // 表单验证通过
         if (valid) {
+          this.isSubmitting = true
           try {
             // 调用API提交表单数据：根据formType调用对应接口，传入表单数据
             await this.$api({ type: this.formType, data: refForm.form })
@@ -142,6 +145,8 @@ export default {
           } catch (err) {
             // 提交失败，重置表单字段
             refForm.$refs['elForm'].resetFields()
+          } finally {
+            this.isSubmitting = false
           }
         } else {
           // 表单验证失败，返回false
